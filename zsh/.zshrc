@@ -6,6 +6,7 @@ export NVM_DIR="$HOME/.nvm"
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export BUN_INSTALL="$HOME/.bun"
 
+export PATH="$HOME/.fzf/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$PNPM_HOME:$PATH" # Add PNPM to PATH if not already present
 export PATH="$BUN_INSTALL/bin:$PATH"

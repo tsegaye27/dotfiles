@@ -1,0 +1,18 @@
+let mapleader = " "
+
+source ~/.vim/plugins.vim
+source ~/.vim/settings.vim
+source ~/.vim/mappings.vim
+source ~/.vim/plugin_configs.vim
+
+if has('filetype')
+ filetype plugin indent on
+endif
+
+if has("autocmd")
+ autocmd BufWritePost ~/.vim/vimrc source % | echo "vimrc reloaded"
+ autocmd BufWritePost ~/.vim/settings.vim source ~/.vim/vimrc | echo "settings.vim changed, vimrc reloaded"
+ autocmd BufWritePost ~/.vim/plugins.vim source ~/.vim/vimrc | echo "plugins.vim changed, vimrc reloaded"
+ autocmd BufWritePost ~/.vim/mappings.vim source ~/.vim/vimrc | echo "mappings.vim changed, vimrc reloaded"
+ autocmd BufWritePost ~/.vim/plugin_configs.vim source ~/.vim/vimrc | echo "plugin_configs.vim changed, vimrc reloaded"
+endif

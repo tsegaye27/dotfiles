@@ -1,5 +1,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
+add_newline = false
+
 format = """
 [](surface0)\
 $os\
@@ -27,6 +29,7 @@ $time\
 $line_break$character"""
 
 palette = 'catppuccin_mocha'
+
 
 [palettes.gruvbox_dark]
 color_fg0 = '#fbf1c7'
@@ -73,25 +76,25 @@ disabled = false
 style = "bg:surface0 fg:text"
 
 [os.symbols]
-Windows = "󰍲"
+# Windows = "󰍲"
 Ubuntu = "󰕈"
-SUSE = ""
-Raspbian = "󰐿"
-Mint = "󰣭"
-Macos = ""
-Manjaro = ""
-Linux = "󰌽"
-Gentoo = "󰣨"
-Fedora = "󰣛"
-Alpine = ""
-Amazon = ""
-Android = ""
-Arch = "󰣇"
-Artix = "󰣇"
-CentOS = ""
-Debian = "󰣚"
-Redhat = "󱄛"
-RedHatEnterprise = "󱄛"
+# SUSE = ""
+# Raspbian = "󰐿"
+# Mint = "󰣭"
+# Macos = ""
+# Manjaro = ""
+# Linux = "󰌽"
+# Gentoo = "󰣨"
+# Fedora = "󰣛"
+# Alpine = ""
+# Amazon = ""
+# Android = ""
+# Arch = "󰣇"
+# Artix = "󰣇"
+# CentOS = ""
+# Debian = "󰣚"
+# Redhat = "󱄛"
+# RedHatEnterprise = "󱄛"
 
 [username]
 show_always = true
@@ -122,54 +125,55 @@ style = "bg:teal"
 format = '[[($all_status$ahead_behind )](fg:base bg:green)]($style)'
 
 [nodejs]
-symbol = ""
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+disabled = true
+# symbol = ""
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[c]
-symbol = " "
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# [c]
+# symbol = " "
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[rust]
-symbol = ""
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# [rust]
+# symbol = ""
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[golang]
-symbol = ""
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# [golang]
+# symbol = ""
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[php]
-symbol = ""
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# [php]
+# symbol = ""
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[java]
-symbol = " "
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# [java]
+# symbol = " "
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[kotlin]
-symbol = ""
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# [kotlin]
+# symbol = ""
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[haskell]
-symbol = ""
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# [haskell]
+# symbol = ""
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[python]
-symbol = ""
-style = "bg:teal"
-format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+# [python]
+# symbol = ""
+# style = "bg:teal"
+# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-[docker_context]
-symbol = ""
-style = "bg:mantle"
-format = '[[ $symbol( $context) ](fg:#83a598 bg:color_bg3)]($style)'
+# [docker_context]
+# symbol = ""
+# style = "bg:mantle"
+# format = '[[ $symbol( $context) ](fg:#83a598 bg:color_bg3)]($style)'
 
 [time]
 disabled = false
@@ -179,6 +183,8 @@ format = '[[  $time ](fg:mantle bg:purple)]($style)'
 
 [line_break]
 disabled = false
+
+command_timeout = 1000
 
 [character]
 disabled = false

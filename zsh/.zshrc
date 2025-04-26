@@ -3,12 +3,10 @@ export EDITOR='nvim'
 export TERM=xterm-256color
 export ZSH="$HOME/.oh-my-zsh"
 export NVM_DIR="$HOME/.nvm"
-export PNPM_HOME="$HOME/.local/share/pnpm"
 export BUN_INSTALL="$HOME/.bun"
 
 export PATH="$HOME/.fzf/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$PNPM_HOME:$PATH" # Add PNPM to PATH if not already present
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$PATH:/home/tsegaye/Documents/dev/flutter_linux_3.16.5-stable/flutter/bin"
@@ -36,7 +34,7 @@ source "$ZSH/oh-my-zsh.sh"
 
 [ -f "$HOME/.deno/env" ] && . "$HOME/.deno/env" # Load Deno env
 
-eval "$(zoxide init zsh)" # Initialize zoxide
+eval "$(zoxide init --cmd cd zsh)" # Initialize zoxide
 
 eval $(thefuck --alias)   # Initialize thefuck
 eval $(thefuck --alias fk) # Optional: shorter alias for thefuck
@@ -60,11 +58,8 @@ if command -v fzf >/dev/null 2>&1; then
 fi
 
 # --- Aliases ---
-alias l="eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions"
 alias ls="eza --color=always --icons=always"
-alias ll="eza --color=always --long --header --git --icons=always"
-alias la="eza --color=always --long --header --git --icons=always --all"
-alias lt="eza --color=always --long --tree --level=2 --icons=always"
+alias ll="eza --color=always --long --header --icons=always"
 
 alias update="sudo apt update && sudo apt upgrade -y"
 alias battery="upower -i /org/freedesktop/UPower/devices/battery_BAT0"
@@ -102,4 +97,3 @@ _fzf_comprun() {
 
 # --- Prompt Setup (Starship) ---
 eval "$(starship init zsh)"
-

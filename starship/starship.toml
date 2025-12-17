@@ -77,11 +77,11 @@ style = "bg:surface0 fg:text"
 
 [os.symbols]
 # Windows = "󰍲"
-Ubuntu = "󰕈"
+# Ubuntu = "󰕈"
 # SUSE = ""
 # Raspbian = "󰐿"
 # Mint = "󰣭"
-# Macos = ""
+Macos = "󰀵"
 # Manjaro = ""
 # Linux = "󰌽"
 # Gentoo = "󰣨"

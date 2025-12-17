@@ -9,12 +9,10 @@ export PATH="$HOME/.fzf/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-export PATH="$PATH:/home/tsegaye/Documents/dev/flutter_linux_3.16.5-stable/flutter/bin"
 export PATH="$PATH:$HOME/.pub-cache/bin"
-export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+export PATH="$PATH:$HOME/go/bin"
 # export PATH="$PATH:/usr/local/bin/python3" # Usually not needed
-
-export XDG_DATA_DIRS="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}:/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share"
 
 # --- Oh My Zsh ---
 plugins=(
@@ -36,8 +34,13 @@ source "$ZSH/oh-my-zsh.sh"
 
 eval "$(zoxide init --cmd cd zsh)" # Initialize zoxide
 
-eval $(thefuck --alias)   # Initialize thefuck
-eval $(thefuck --alias fk) # Optional: shorter alias for thefuck
+# --- zoxide fzf integration ---
+zi() {
+  local dir
+  dir="$(zoxide query -l | fzf --height=40% --border --preview 'eza --tree --color=always {} | head -200')" \
+    && cd "$dir"
+}
+
 
 # --- fzf Configuration ---
 if command -v fzf >/dev/null 2>&1; then
@@ -61,8 +64,8 @@ fi
 alias ls="eza --color=always --icons=always"
 alias ll="eza --color=always --long --header --icons=always"
 
-alias update="sudo apt update && sudo apt upgrade -y"
-alias battery="upower -i /org/freedesktop/UPower/devices/battery_BAT0"
+alias update="brew update && brew upgrade"
+alias battery="pmset -g batt"
 alias curljson='curl -H "Content-Type: application/json"'
 
 alias g="git"
@@ -97,3 +100,8 @@ _fzf_comprun() {
 
 # --- Prompt Setup (Starship) ---
 eval "$(starship init zsh)"
+
+# bun completions
+[ -s "/Users/apple/.bun/_bun" ] && source "/Users/apple/.bun/_bun"
+
+export BAT_THEME='Dracula'

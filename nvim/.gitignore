@@ -1,0 +1,29 @@
+# Neovim
+*.swp
+*.swo
+*~
+.*.sw?
+
+# Lazy.nvim
+lazy-lock.json
+
+# Local overrides
+local/
+
+# Session files
+Session.vim
+*.session
+
+# Temporary files
+*.tmp
+*.bak
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Plugin build artifacts
+**/node_modules/
+**/.git/
+

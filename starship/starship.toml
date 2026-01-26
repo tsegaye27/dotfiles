@@ -22,7 +22,6 @@ $kotlin\
 $haskell\
 $python\
 [](fg:teal bg:blue)\
-$docker_context\
 [](fg:blue bg:purple)\
 $time\
 [ ](fg:purple)\
@@ -140,20 +139,22 @@ disabled = true
 # style = "bg:teal"
 # format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-# [golang]
-# symbol = ""
-# style = "bg:teal"
-# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+[golang]
+symbol = ""
+style = "bg:teal"
+format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
 # [php]
 # symbol = ""
 # style = "bg:teal"
 # format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-# [java]
-# symbol = " "
-# style = "bg:teal"
-# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+[java]
+symbol = " "
+style = "bg:teal"
+format = '[[ $symbol($version) ](fg:base bg:teal)]($style)'
+detect_extensions = ["java"]
+detect_files = ["pom.xml", "build.gradle", "build.gradle.kts"]
 
 # [kotlin]
 # symbol = ""
@@ -165,10 +166,10 @@ disabled = true
 # style = "bg:teal"
 # format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-# [python]
-# symbol = ""
-# style = "bg:teal"
-# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+[python]
+symbol = ""
+style = "bg:teal"
+format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
 # [docker_context]
 # symbol = ""

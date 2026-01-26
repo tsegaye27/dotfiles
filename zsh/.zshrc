@@ -12,6 +12,9 @@ export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 export PATH="$PATH:$HOME/.pub-cache/bin"
 export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 export PATH="$PATH:$HOME/go/bin"
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/emulator
 # export PATH="$PATH:/usr/local/bin/python3" # Usually not needed
 
 # --- Oh My Zsh ---
@@ -105,3 +108,9 @@ eval "$(starship init zsh)"
 [ -s "/Users/apple/.bun/_bun" ] && source "/Users/apple/.bun/_bun"
 
 export BAT_THEME='Dracula'
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+source /Users/apple/.config/broot/launcher/bash/br
+
+export PATH="/Users/apple/.antigravity/antigravity/bin:$PATH"

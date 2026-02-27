@@ -118,6 +118,25 @@ inoremap jk <Esc>
 vnoremap <C-c> "+y                       
 nnoremap <C-v> "+p                       
 
+" Wayland clipboard fallback (requires wl-clipboard installed)
+if $WAYLAND_DISPLAY != ''
+    " Yank to system clipboard (visual + normal line yank)
+    vnoremap <silent> "+y y:call system('wl-copy', @")<CR>:echo "Yanked to Wayland clipboard"<CR>
+    nnoremap <silent> "+yy yy:call system('wl-copy', @")<CR>:echo "Yanked line to Wayland clipboard"<CR>
+
+    " Paste from system clipboard
+    nnoremap <silent> "+p :let @\" = system('wl-paste --no-newline')<CR>p
+    nnoremap <silent> "+P :let @\" = system('wl-paste --no-newline')<CR>P
+
+    " Optional: Make normal y / yy also copy to system clipboard (like unnamedplus behavior)
+    " vnoremap y y:call system('wl-copy', @")<CR>
+    " nnoremap yy yy:call system('wl-copy', @")<CR>
+
+    " Fix your existing <C-c> / <C-v> to use the working + mappings
+    vnoremap <C-c> "+y
+    nnoremap <C-v> "+p
+endif
+
 " Tab completion in insert mode
 inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <silent><expr> <S-TAB> pumvisible() ? "\<C-p>" : "\<S-TAB>"

@@ -1,2 +1,7 @@
 window-padding-y = 5
 theme = catppuccin-mocha.conf
+
+keybind = alt+h=text:\x1bh
+keybind = alt+j=text:\x1bj
+keybind = alt+k=text:\x1bk
+keybind = alt+l=text:\x1bl

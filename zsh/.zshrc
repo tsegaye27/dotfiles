@@ -83,6 +83,8 @@ alias gp="git push"
 alias gl="git log --oneline --graph --decorate --all"
 alias gd="git diff"
 alias gdc="git diff --cached"
+alias taudio="yt-dlp -x --audio-format mp3"
+alias claw="/Users/apple/old-files/my-projects/claw-code/rust/target/release/claw"
 
 # --- Functions ---
 _fzf_compgen_path() {
@@ -114,3 +116,18 @@ export BAT_THEME='Dracula'
 source /Users/apple/.config/broot/launcher/bash/br
 
 export PATH="/Users/apple/.antigravity/antigravity/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/apple/.antigravity/antigravity/bin:$PATH"
+export GOOGLE_API_KEY="AIzaSyDrKOZym6wSewQSQAIc35NP_EUY4wBLBQ8"
+export CLAW_MODEL="gemini-2.5-flash"
+
+# opencode
+export PATH=/Users/apple/.opencode/bin:$PATH
+
+alias claude-mem='bun "/Users/apple/.claude/plugins/marketplaces/thedotmack/plugin/scripts/worker-service.cjs"'
+
+
+# Added by Antigravity CLI installer
+export PATH="/Users/apple/.local/bin:$PATH"
+export JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home

@@ -1,0 +1,8 @@
+k9s:
+  refreshRate: 2
+  ui:
+    skin: tokyonight
+    logoless: true
+    crumbsless: false
+    reactive: true
+    noIcons: false

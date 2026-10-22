@@ -1,0 +1,95 @@
+# Tokyo Night, transparent background (matches tmux bar)
+foreground: &fg "#c0caf5"
+background: &bg "default"
+current_line: &line "#292e42"
+selection: &sel "#3b4261"
+comment: &comment "#565f89"
+blue: &blue "#7aa2f7"
+cyan: &cyan "#7dcfff"
+green: &green "#9ece6a"
+orange: &orange "#ff9e64"
+purple: &purple "#bb9af7"
+red: &red "#f7768e"
+yellow: &yellow "#e0af68"
+dark: &dark "#16161e"
+
+k9s:
+  body:
+    fgColor: *fg
+    bgColor: *bg
+    logoColor: *purple
+  prompt:
+    fgColor: *fg
+    bgColor: *bg
+    suggestColor: *comment
+  info:
+    fgColor: *blue
+    sectionColor: *fg
+  dialog:
+    fgColor: *fg
+    bgColor: *bg
+    buttonFgColor: *dark
+    buttonBgColor: *purple
+    buttonFocusFgColor: *dark
+    buttonFocusBgColor: *blue
+    labelFgColor: *orange
+    fieldFgColor: *fg
+  frame:
+    border:
+      fgColor: *sel
+      focusColor: *blue
+    menu:
+      fgColor: *fg
+      keyColor: *purple
+      numKeyColor: *orange
+    crumbs:
+      fgColor: *dark
+      bgColor: *blue
+      activeColor: *purple
+    status:
+      newColor: *cyan
+      modifyColor: *blue
+      addColor: *green
+      errorColor: *red
+      highlightColor: *orange
+      killColor: *comment
+      completedColor: *comment
+    title:
+      fgColor: *fg
+      bgColor: *bg
+      highlightColor: *purple
+      counterColor: *blue
+      filterColor: *orange
+  views:
+    charts:
+      bgColor: *bg
+      defaultDialColors: [*blue, *red]
+      defaultChartColors: [*blue, *red]
+    table:
+      fgColor: *fg
+      bgColor: *bg
+      cursorFgColor: *fg
+      cursorBgColor: *line
+      markColor: *orange
+      header:
+        fgColor: *purple
+        bgColor: *bg
+        sorterColor: *cyan
+    xray:
+      fgColor: *fg
+      bgColor: *bg
+      cursorColor: *line
+      graphicColor: *blue
+      showIcons: false
+    yaml:
+      keyColor: *blue
+      colonColor: *comment
+      valueColor: *fg
+    logs:
+      fgColor: *fg
+      bgColor: *bg
+      indicator:
+        fgColor: *fg
+        bgColor: *bg
+        toggleOnColor: *green
+        toggleOffColor: *comment

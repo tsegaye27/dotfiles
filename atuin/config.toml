@@ -1,0 +1,10 @@
+# Local-only shell history search (Ctrl-R)
+auto_sync = false
+update_check = false
+style = "compact"
+inline_height = 20
+show_preview = true
+filter_mode = "global"
+search_mode = "fuzzy"
+enter_accept = false       # Enter puts command on prompt, doesn't run it
+show_help = false

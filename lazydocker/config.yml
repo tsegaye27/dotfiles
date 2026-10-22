@@ -1,0 +1,9 @@
+# Tokyo Night accents, terminal background shows through
+gui:
+  border: rounded
+  returnImmediately: false
+  theme:
+    activeBorderColor: ["#7aa2f7", bold]
+    inactiveBorderColor: ["#3b4261"]
+    selectedLineBgColor: ["#292e42"]
+    optionsTextColor: ["#bb9af7"]

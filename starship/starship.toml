@@ -129,10 +129,10 @@ disabled = true
 # style = "bg:teal"
 # format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-# [c]
-# symbol = " "
-# style = "bg:teal"
-# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+[c]
+symbol = " "
+style = "bg:teal"
+format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
 [rust]
 symbol = ""
@@ -144,10 +144,10 @@ symbol = ""
 style = "bg:teal"
 format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
-# [php]
-# symbol = ""
-# style = "bg:teal"
-# format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
+[php]
+symbol = ""
+style = "bg:teal"
+format = '[[ $symbol( $version) ](fg:base bg:teal)]($style)'
 
 [java]
 symbol = " "

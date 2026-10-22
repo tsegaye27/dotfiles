@@ -1,11 +1,3 @@
----@diagnostic disable: undefined-global
--- ============================================================================
--- Key Mappings Configuration
--- ============================================================================
--- This file contains all custom key mappings.
--- Leader key is set to <Space> in init.lua
--- ============================================================================
-
 local map = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
@@ -27,9 +19,14 @@ map("n", "<C-q>", "<cmd>q<CR>", { desc = "Quit Neovim" })
 map("n", "<C-S-q>", "<cmd>qa!<CR>", { desc = "Force Quit Neovim" })
 
 -- Editing Enhancements
-map("i", "jk", "<Esc>", opts)
-map("i", "kj", "<Esc>", opts)
-map("n", "Y", "y$", { desc = "Yank to end of line" })
+map("i", "jk", "<Esc>", opts) -- Fast exit from insert mode
+map("i", "kj", "<Esc>", opts) -- Fast exit from insert mode
+
+-- Clipboard operations
+map("n", "d", '"_d', { desc = "Delete without yanking" })
+map("v", "p", '"_dP', { desc = "Paste without losing clipboard" })
+map({ "n", "v" }, "y", '"+y', { desc = "Yank to system clipboard" })
+map("n", "Y", '"+Y', { desc = "Yank line to system clipboard" })
 
 -- Folding
 map("n", "zo", "zo", { desc = "Open fold" })
@@ -37,6 +34,12 @@ map("n", "zc", "zc", { desc = "Close fold" })
 map("n", "za", "za", { desc = "Toggle fold" })
 map("n", "zR", "zR", { desc = "Open all folds" })
 map("n", "zM", "zM", { desc = "Close all folds" })
+
+-- Search Navigation
+map("n", "n", "nzz", { desc = "Next search result and center" })
+map("n", "N", "Nzz", { desc = "Previous search result and center" })
+map("n", "<C-d>", "<C-d>zz", { desc = "Scroll down and center" })
+map("n", "<C-u>", "<C-u>zz", { desc = "Scroll up and center" })
 
 -- Plugin Keymaps (Examples - some are defined in init.lua within plugin configs)
 map("n", "<leader>sR", function()
@@ -56,7 +59,17 @@ map("n", "<leader>gg", function()
 		end,
 		on_close = function(_)
 			vim.cmd("stopinsert!")
-		end,
+		end, -- Use stopinsert on close
 	})
 	lazygit:toggle()
 end, { desc = "[G]it [G]UI (Lazygit)" })
+
+-- Emmet trigger (if needed explicitly, often handled by completion)
+-- map('i', '<C-y>,', '<C-y>,', { desc = 'Trigger Emmet' })
+
+-- Treesitter Textobjects (Examples - see Treesitter config for more)
+-- map('o', 'if', ':<C-U>lua require("nvim-treesitter.textobjects.select").select_textobject("@function.inner")<CR>', { desc = 'Select inner function' })
+-- map('x', 'if', ':<C-U>lua require("nvim-treesitter.textobjects.select").select_textobject("@function.inner")<CR>', { desc = 'Select inner function' })
+
+-- ToggleTerm mapping (defined in opts, but could be here too)
+-- map('n', '<c-\>', '<cmd>ToggleTerm<cr>', { desc = 'Toggle Terminal' })

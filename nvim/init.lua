@@ -1,31 +1,11 @@
--- ============================================================================
--- Neovim Configuration
--- ============================================================================
--- This is the main entry point for the Neovim configuration.
--- It sets up the plugin manager and loads all plugins with their configurations.
---
--- Structure:
---   1. Leader key setup
---   2. Load core settings and keymaps
---   3. Bootstrap lazy.nvim plugin manager
---   4. Configure all plugins
--- ============================================================================
-
----@diagnostic disable: undefined-global
--- Set leader and local leader keys
--- Leader key is used as a prefix for custom keybindings
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- Load core configuration modules
-require("settings") -- Neovim options and settings
-require("keymaps") -- Custom key mappings
+vim.g.copilot_enabled = 0
 
--- ============================================================================
--- Bootstrap lazy.nvim Plugin Manager
--- ============================================================================
--- Automatically installs lazy.nvim if it's not already installed.
--- This allows the configuration to work on fresh systems without manual setup.
+require("settings")
+require("keymaps")
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -34,29 +14,18 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 		vim.api.nvim_err_writeln("Error cloning lazy.nvim: " .. out)
 	end
 end
-vim.opt.rtp:prepend(lazypath) -- Add lazy.nvim to runtime path
-
--- ============================================================================
--- Plugin Configuration
--- ============================================================================
--- All plugins are configured here using lazy.nvim.
--- Plugins are lazy-loaded by default for optimal performance.
--- ============================================================================
+vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	-- ========================================================================
-	-- Colorscheme: Catppuccin
-	-- ========================================================================
-	-- A beautiful, customizable colorscheme with multiple flavours.
-	-- Loaded immediately (lazy = false) to avoid flash of unstyled content.
 	{
 		"catppuccin/nvim",
 		name = "catppuccin",
-		priority = 1000, -- Load first
-		lazy = false, -- Load immediately
+		priority = 1000,
+		lazy = false,
 		config = function()
 			require("catppuccin").setup({
-				flavour = "mocha", -- Options: latte, frappe, macchiato, mocha
+				flavour = "mocha", -- latte, frappe, macchiato, mocha
+				transparent_background = true,
 				integrations = {
 					cmp = true,
 					gitsigns = true,
@@ -66,10 +35,11 @@ require("lazy").setup({
 					mini = true,
 					lsp_trouble = true,
 					mason = true,
+					mini = { enabled = true },
 					treesitter = true,
 					indent_blankline = {
-						enabled = true,
-						scope_color = "overlay1",
+						enabled = false,
+						scope_color = "overlay1", -- catppuccin color
 					},
 					native_lsp = {
 						enabled = true,
@@ -80,26 +50,25 @@ require("lazy").setup({
 							information = { "undercurl" },
 						},
 					},
+					-- Add other integrations as needed
 				},
 			})
-			vim.cmd.colorscheme("catppuccin")
+			vim.cmd.colorscheme("catppuccin-nvim")
 
-			vim.opt.fillchars.foldopen = ""
-			vim.opt.fillchars.foldclose = ""
+			-- Update fillchars after colorscheme loads
+			vim.opt.fillchars = {
+				foldopen = "-",
+				foldclose = "+",
+				fold = "-",
+				foldsep = "│",
+				diff = "╱",
+				eob = " ",
+			}
 		end,
 	},
 
-	-- ========================================================================
-	-- Editor Enhancements
-	-- ========================================================================
-	-- Automatically adjusts 'shiftwidth' and 'expandtab' based on file type.
 	{ "tpope/vim-sleuth", event = "BufReadPost" },
 
-	-- ========================================================================
-	-- Git Integration: Gitsigns
-	-- ========================================================================
-	-- Shows git signs in the sign column and provides git-related keybindings.
-	-- Features: blame, diff, stage/reset hunks, and more.
 	{
 		"lewis6991/gitsigns.nvim",
 		event = "BufReadPost",
@@ -110,92 +79,10 @@ require("lazy").setup({
 				current_line_blame_opts = {
 					delay = 500,
 				},
-				on_attach = function(bufnr)
-					local gs = package.loaded.gitsigns
-
-					local function map(mode, lhs, rhs, opts)
-						opts = opts or {}
-						opts.buffer = bufnr
-						vim.keymap.set(mode, lhs, rhs, opts)
-					end
-
-					-- Navigation
-					map("n", "]c", function()
-						if vim.wo.diff then
-							return "]c"
-						end
-						vim.schedule(function()
-							gs.next_hunk()
-						end)
-						return "<Ignore>"
-					end, { expr = true, desc = "Next hunk" })
-
-					map("n", "[c", function()
-						if vim.wo.diff then
-							return "[c"
-						end
-						vim.schedule(function()
-							gs.prev_hunk()
-						end)
-						return "<Ignore>"
-					end, { expr = true, desc = "Previous hunk" })
-
-					-- Actions
-					map({ "n", "v" }, "<leader>hs", ":Gitsigns stage_hunk<CR>", { desc = "Stage hunk" })
-					map({ "n", "v" }, "<leader>hr", ":Gitsigns reset_hunk<CR>", { desc = "Reset hunk" })
-					map("n", "<leader>hS", gs.stage_buffer, { desc = "Stage buffer" })
-					map("n", "<leader>hu", gs.undo_stage_hunk, { desc = "Undo stage hunk" })
-					map("n", "<leader>hR", gs.reset_buffer, { desc = "Reset buffer" })
-					map("n", "<leader>hp", gs.preview_hunk, { desc = "Preview hunk" })
-					map("n", "<leader>hb", function()
-						gs.blame_line({ full = true })
-					end, { desc = "Blame line" })
-					map("n", "<leader>tb", gs.toggle_current_line_blame, { desc = "Toggle blame line" })
-					map("n", "<leader>hd", gs.diffthis, { desc = "Diff this" })
-					map("n", "<leader>hD", function()
-						gs.diffthis("~")
-					end, { desc = "Diff this ~" })
-					map("n", "<leader>td", gs.toggle_deleted, { desc = "Toggle deleted" })
-				end,
 			})
 		end,
 	},
-	-- ========================================================================
-	-- Go Development: go.nvim
-	-- ========================================================================
-	-- Enhanced Go development experience with auto-formatting on save.
-	-- Automatically formats Go files using gofumpt before saving.
-	{
-		"ray-x/go.nvim",
-		dependencies = {
-			"ray-x/guihua.lua",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		opts = {
-			gofmt = "gofumpt", -- Use gofumpt for stricter formatting
-		},
-		config = function(lp, opts)
-			require("go").setup(opts)
-			-- Auto-format Go files on save
-			local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
-			vim.api.nvim_create_autocmd("BufWritePre", {
-				pattern = "*.go",
-				callback = function()
-					require("go.format").gofmt()
-				end,
-				group = format_sync_grp,
-			})
-		end,
-		event = { "CmdlineEnter" },
-		ft = { "go", "gomod" },
-		build = ':lua require("go.install").update_all_sync()',
-	},
 
-	-- ========================================================================
-	-- HTML/CSS: Emmet
-	-- ========================================================================
-	-- Expands HTML/CSS abbreviations (e.g., div>ul>li becomes full HTML).
-	-- Trigger with <C-y>, in insert mode.
 	{
 		"mattn/emmet-vim",
 		ft = { "html", "css", "javascriptreact", "typescriptreact", "vue", "svelte" },
@@ -208,56 +95,14 @@ require("lazy").setup({
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
-		config = function()
-			local wk = require("which-key")
-			wk.setup({
-				plugins = {
-					marks = true,
-					registers = true,
-					spelling = { enabled = true },
-					presets = {
-						operators = true,
-						motions = true,
-						text_objects = true,
-						windows = true,
-						nav = true,
-						z = true,
-						g = true,
-					},
-				},
-				window = {
-					border = "rounded",
-					margin = { 1, 0, 1, 0 },
-					padding = { 2, 2, 2, 2 },
-				},
-				layout = {
-					height = { min = 4, max = 25 },
-					width = { min = 20, max = 50 },
-					spacing = 3,
-					align = "left",
-				},
-				ignore_missing = true,
-				show_help = true,
-				triggers = "auto",
-				delay = 50,
-			})
-
-			wk.register({
-				["<leader>"] = {
-					f = { name = "[F]ormat/File" },
-					s = { name = "[S]earch" },
-					g = { name = "[G]it" },
-					e = { name = "[E]xplorer" },
-					r = { name = "[R]ename/Replace" },
-					c = { name = "[C]ode" },
-					d = { name = "[D]iagnostic" },
-				},
-			})
-		end,
+		opts = {
+			delay = 50,
+		},
 	},
 
 	{
 		"nvim-tree/nvim-tree.lua",
+		-- cmd = 'NvimTreeToggle',
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		keys = {
 			{ "<leader>e", "<cmd>NvimTreeToggle<CR>", desc = "Toggle File Explorer" },
@@ -280,34 +125,27 @@ require("lazy").setup({
 						enable = true,
 					},
 					icons = {
-						webdev_colors = true,
-						git_placement = "before",
-						show = {
-							file = true,
-							folder = true,
-							folder_arrow = true,
-							git = true,
-						},
+						-- provider = 'nvim-web-devicons',
 						glyphs = {
-							default = "",
-							symlink = "",
+							default = "", --
+							symlink = "", --
 							folder = {
-								arrow_open = "",
-								arrow_closed = "",
-								default = "",
-								open = "",
-								empty = "",
-								empty_open = "",
-								symlink = "",
-								symlink_open = "",
+								arrow_open = "", --  (fa-chevron-down)
+								arrow_closed = "", --  (fa-chevron-right)
+								default = "", --
+								open = "", --
+								empty = "", --
+								empty_open = "", --
+								symlink = "", --
+								symlink_open = "", --
 							},
 							git = {
-								unstaged = "",
+								unstaged = "",
 								staged = "✓",
-								unmerged = "",
+								unmerged = "",
 								renamed = "➜",
 								untracked = "★",
-								deleted = "",
+								deleted = "",
 								ignored = "◌",
 							},
 						},
@@ -320,27 +158,12 @@ require("lazy").setup({
 			})
 		end,
 	},
-	{ "wakatime/vim-wakatime", event = "VeryLazy" },
+
+	-- { "wakatime/vim-wakatime", event = "VeryLazy" },
 	{
 		"github/copilot.vim",
-		event = "InsertEnter",
-		config = function()
-			vim.g.copilot_no_tab_map = true
-			vim.g.copilot_assume_mapped = true
-			vim.g.copilot_filetypes = {
-				["*"] = true,
-			}
-
-			-- Tab accepts Copilot suggestion, falls back to normal Tab
-			vim.keymap.set("i", "<Tab>", function()
-				if vim.fn["copilot#Accept"]() ~= "" then
-					return vim.fn["copilot#Accept"]()
-				else
-					return "<Tab>"
-				end
-			end, { expr = true, silent = true, desc = "Accept Copilot or insert Tab" })
-		end,
 	},
+
 	{
 		"mg979/vim-visual-multi",
 		branch = "master",
@@ -413,10 +236,11 @@ require("lazy").setup({
 				json = { "prettier" },
 				yaml = { "prettier" },
 				markdown = { "prettier" },
+				php = {},
+				java = {},
 			},
 		},
 	},
-
 	{
 		"windwp/nvim-ts-autotag",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
@@ -426,36 +250,19 @@ require("lazy").setup({
 		end,
 	},
 
+	-- load devicons eagerly so icons work everywhere (nvim-tree, telescope, statusline)
+	{ "nvim-tree/nvim-web-devicons", lazy = false },
+
 	{
-		"nvim-lualine/lualine.nvim",
-		event = "VeryLazy",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {
-			options = {
-				theme = "catppuccin",
-				section_separators = { left = "", right = "" },
-				component_separators = { left = "", right = "" },
-				globalstatus = true,
-				disabled_filetypes = { statusline = { "dashboard", "alpha", "starter" } },
-			},
-			sections = {
-				lualine_a = { "mode" },
-				lualine_b = { "branch", "diff" },
-				lualine_c = { { "filename", path = 1 } },
-				lualine_x = { "diagnostics", "encoding", "fileformat", "filetype" },
-				lualine_y = { "progress" },
-				lualine_z = { "location" },
-			},
-			inactive_sections = {
-				lualine_a = {},
-				lualine_b = {},
-				lualine_c = { { "filename", path = 1 } },
-				lualine_x = { "location" },
-				lualine_y = {},
-				lualine_z = {},
-			},
-			extensions = { "nvim-tree", "toggleterm", "mason" },
-		},
+		"echasnovski/mini.statusline",
+		version = false,
+		lazy = false,
+		config = function()
+			require("mini.statusline").setup({
+				use_icons = true,
+			})
+			vim.opt.laststatus = 3 -- global statusline
+		end,
 	},
 
 	{
@@ -464,24 +271,29 @@ require("lazy").setup({
 		opts = {},
 	},
 
-	-- ========================================================================
-	-- Auto-pairs: nvim-autopairs
-	-- ========================================================================
-	-- Automatically closes brackets, quotes, etc.
-	-- Integrated with nvim-cmp for better completion experience.
+	-- 	{
+	-- 		"edluffy/hologram.nvim",
+	-- 		config = function()
+	-- 			require("hologram").setup({
+	-- 				auto_display = true,
+	-- 			})
+	-- 		end,
+	-- 	},
+	--
+	-- {
+	--     "samodostal/image.nvim",
+	--     dependencies = {
+	--         "nvim-lua/plenary.nvim"
+	--     },
+	--     config = function()
+	--         require("image").setup()
+	--     end
+	-- },
+
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
-		dependencies = { "hrsh7th/nvim-cmp" },
-		config = function()
-			local npairs = require("nvim-autopairs")
-			npairs.setup({})
-
-			-- Integrate with cmp for better completion experience
-			local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-			local cmp = require("cmp")
-			cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
-		end,
+		opts = {},
 	},
 
 	{
@@ -491,13 +303,9 @@ require("lazy").setup({
 		opts = {},
 	},
 
-	-- ========================================================================
-	-- Fuzzy Finder: Telescope
-	-- ========================================================================
-	-- Powerful fuzzy finder for files, buffers, grep, and more.
-	-- Extensions: fzf-native (faster), ui-select (better UI)
 	{
 		"nvim-telescope/telescope.nvim",
+		-- cmd = 'Telescope',
 		version = "0.1.x",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
@@ -591,16 +399,16 @@ require("lazy").setup({
 				end,
 				desc = "[/] Fuzzily search in current buffer",
 			},
-			-- {
-			-- 	"<leader>s/",
-			-- 	function()
-			-- 		require("telescope.builtin").live_grep({
-			-- 			grep_open_files = true,
-			-- 			prompt_title = "Live Grep in Open Files",
-			-- 		})
-			-- 	end,
-			-- 	desc = "[S]earch [/] in Open Files",
-			-- },
+			{
+				"<leader>s/",
+				function()
+					require("telescope.builtin").live_grep({
+						grep_open_files = true,
+						prompt_title = "Live Grep in Open Files",
+					})
+				end,
+				desc = "[S]earch [/] in Open Files",
+			},
 			{
 				"<leader>sn",
 				function()
@@ -634,24 +442,17 @@ require("lazy").setup({
 		end,
 	},
 
-	-- ========================================================================
-	-- LSP: Mason - Language Server Installer
-	-- ========================================================================
-	-- Mason automatically installs and manages LSP servers, DAP adapters,
-	-- linters, and formatters. This makes it easy to get language support
-	-- without manual installation.
-	-- ========================================================================
-	-- LSP: Mason - Language Server Installer
-	-- ========================================================================
-	-- Mason automatically installs and manages LSP servers, DAP adapters,
-	-- linters, and formatters. This makes it easy to get language support
-	-- without manual installation.
-	-- Note: setup() is called in nvim-lspconfig config to ensure proper order
+	{
+		"towolf/vim-helm",
+		ft = { "helm", "yaml" },
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+	},
+
+	-- mason.nvim
 	{
 		"williamboman/mason.nvim",
-		cmd = "Mason", -- Only load when :Mason command is used
+		cmd = "Mason",
 		opts = {
-			-- Pre-install commonly used tools
 			ensure_installed = {
 				"prettier",
 				"stylua",
@@ -659,22 +460,33 @@ require("lazy").setup({
 				"eslint_d",
 				"pyright",
 				"gopls",
-				"clangd",
+				"phpactor",
+				-- "php_cs_fixer", -- Remove this line since we're not using it
 				"jdtls",
 				"java-debug-adapter",
 				"java-test",
+				"spring-boot-tools",
 			},
 		},
-		-- Don't call setup() here - it's called in lspconfig config
+		config = function()
+			require("mason").setup()
+		end,
+	},
+	-- mason-lspconfig.nvim
+	{
+		"williamboman/mason-lspconfig.nvim",
+		dependencies = { "williamboman/mason.nvim" },
+		config = function()
+			require("mason-lspconfig").setup({
+				automatic_installation = false,
+				automatic_enable = { enable = false },
+			})
+		end,
 	},
 
-	-- ========================================================================
-	-- LSP: nvim-lspconfig - Language Server Protocol Configuration
-	-- ========================================================================
-	-- Configures Neovim's native LSP client to work with various language servers.
-	-- Uses the new Neovim 0.11+ native LSP API (vim.lsp.config).
-	-- Supports: TypeScript, Python, Lua, Go, C/C++, Vue, HTML/CSS, and more.
+	-- nvim-lspconfig
 	{
+
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
@@ -684,37 +496,22 @@ require("lazy").setup({
 			{ "j-hui/fidget.nvim", tag = "legacy", opts = {} },
 		},
 		config = function()
-			-- Ensure Mason and mason-lspconfig are set up
+			-- ensure mason + mason-lspconfig are loaded
 			require("mason").setup()
-			require("mason-lspconfig").setup({
-				-- Automatically install these LSP servers
-				ensure_installed = {
-					"lua_ls", -- Lua Language Server
-					"pyright", -- Python Language Server
-					"ts_ls", -- TypeScript Language Server
-					"clangd", -- C/C++ Language Server
-					"html", -- HTML Language Server
-					"cssls", -- CSS Language Server
-					"tailwindcss", -- Tailwind CSS IntelliSense
-					"vue_ls", -- Vue Language Server (replaces deprecated volar)
-					"emmet_ls", -- Emmet Language Server
-					"gopls", -- Go Language Server
-				},
-			})
+			require("mason-lspconfig").setup()
 
-			-- Set up LSP capabilities
-			-- Extend default capabilities with completion capabilities from nvim-cmp
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
+			local base_caps = vim.lsp.protocol.make_client_capabilities()
+			local caps = vim.tbl_deep_extend("force", base_caps, require("cmp_nvim_lsp").default_capabilities())
 
 			local on_attach = function(client, bufnr)
-				-- Disable formatting for servers that we format with external tools
-				-- (Conform.nvim handles formatting for these languages)
-				if client.name == "ts_ls" or client.name == "pyright" or client.name == "vue_ls" then
+				local no_format = { ts_ls = true, pyright = true, vue_ls = true }
+				if no_format[client.name] then
 					client.server_capabilities.documentFormattingProvider = false
 					client.server_capabilities.documentRangeFormattingProvider = false
 				end
-
+				-- jdtls manages its own formatter; don't let the fallback fight it
+				-- (jdtls attaches via ftplugin, not this list, so nothing else to do here)
+				-- helper to define buffer‐local keymaps
 				local function bufmap(keys, fn, desc)
 					vim.keymap.set("n", keys, fn, {
 						buffer = bufnr,
@@ -724,6 +521,7 @@ require("lazy").setup({
 					})
 				end
 
+				-- your LSP keymaps
 				bufmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
 				bufmap("gr", vim.lsp.buf.references, "[G]oto [R]eferences")
 				bufmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
@@ -739,6 +537,7 @@ require("lazy").setup({
 					vim.lsp.buf.format({ async = true })
 				end, "[L]SP [F]ormat")
 
+				-- ts‐ls specific code actions
 				if client.name == "ts_ls" then
 					bufmap("<leader>oi", function()
 						vim.lsp.buf.code_action({
@@ -746,6 +545,7 @@ require("lazy").setup({
 							apply = true,
 						})
 					end, "[O]rganize [I]mports")
+
 					bufmap("<leader>ru", function()
 						vim.lsp.buf.code_action({
 							context = { only = { "source.removeUnused" } },
@@ -755,97 +555,126 @@ require("lazy").setup({
 				end
 			end
 
-			-- ================================================================
-			-- Configure Individual LSP Servers
-			-- ================================================================
-
-			-- Lua Language Server
-			-- Configured with Neovim-specific settings
-			vim.lsp.config("lua_ls", {
-				capabilities = capabilities,
+			-- list the servers you want
+			local servers = {
+				"ts_ls",
+				"pyright",
+				"lua_ls",
+				"html",
+				"cssls",
+				"tailwindcss",
+				"vue_ls",
+				"emmet_ls",
+				"phpactor",
+				"yamlls",
+			}
+			vim.lsp.config("yamlls", {
+				capabilities = caps,
 				on_attach = on_attach,
 				settings = {
-					Lua = {
-						runtime = { version = "LuaJIT" },
-						diagnostics = {
-							globals = { "vim" }, -- Recognize vim global
-							disable = { "undefined-global" }, -- Disable false positives
+					yaml = {
+						schemaStore = {
+							enable = true,
+							url = "https://www.schemastore.org/api/json/catalog.json",
 						},
-						workspace = {
-							library = vim.api.nvim_get_runtime_file("", true),
-							checkThirdParty = false,
+						schemas = {
+							-- Kubernetes schemas - make them more specific
+							["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0-standalone-strict/deployment.json"] = {
+								"deployment.yaml",
+								"deployment.yml",
+								"*/deployment.yaml",
+								"*/deployment.yml",
+							},
+							["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0-standalone-strict/service.json"] = {
+								"service.yaml",
+								"service.yml",
+								"*/service.yaml",
+								"*/service.yml",
+							},
+							["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0-standalone-strict/configmap.json"] = {
+								"configmap.yaml",
+								"configmap.yml",
+								"*/configmap.yaml",
+								"*/configmap.yml",
+							},
+							["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0-standalone-strict/pod.json"] = {
+								"pod.yaml",
+								"pod.yml",
+								"*/pod.yaml",
+								"*/pod.yml",
+							},
+							["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0-standalone-strict/ingress.json"] = {
+								"ingress.yaml",
+								"ingress.yml",
+								"*/ingress.yaml",
+								"*/ingress.yml",
+							},
+							-- Fallback for other Kubernetes resources
+							["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.24.0-standalone-strict/all.json"] = {
+								"*.k8s.yaml",
+								"*.k8s.yml",
+								"k8s/*.yaml",
+								"kubernetes/*.yaml",
+							},
+							-- Docker Compose
+							["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = {
+								"docker-compose.yaml",
+								"docker-compose.yml",
+								"compose.yaml",
+								"compose.yml",
+							},
 						},
-						telemetry = { enable = false },
+						validate = true,
+						hover = true,
+						completion = true,
+						format = {
+							enable = true,
+						},
+						-- This helps prevent multiple schema matches
+						associate = {
+							-- Only associate exact filename matches
+							"deployment.yaml",
+							"service.yaml",
+							"configmap.yaml",
+						},
 					},
 				},
 			})
-			vim.lsp.enable("lua_ls")
-
-			-- TypeScript Language Server
-			vim.lsp.config("ts_ls", {
-				capabilities = capabilities,
+			vim.lsp.config("phpactor", {
+				capabilities = caps,
 				on_attach = on_attach,
+				init_options = {},
+				settings = {},
 			})
-			vim.lsp.enable("ts_ls")
+			for _, name in ipairs(servers) do
+				vim.lsp.config(name, {
+					capabilities = caps,
+					on_attach = on_attach,
+				})
+				vim.lsp.enable(name)
+			end
 
-			-- C/C++ Language Server (clangd)
-			vim.lsp.config("clangd", {
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-			vim.lsp.enable("clangd")
-
-			-- Python Language Server (pyright)
-			vim.lsp.config("pyright", {
-				capabilities = capabilities,
-				on_attach = on_attach,
-			})
-			vim.lsp.enable("pyright")
-
-			-- Go Language Server (gopls)
-			-- Configured with enhanced static analysis
 			vim.lsp.config("gopls", {
-				capabilities = capabilities,
+				capabilities = caps,
 				on_attach = on_attach,
 				settings = {
 					gopls = {
 						analyses = {
-							unusedparams = true, -- Warn about unused parameters
-							shadow = true, -- Warn about variable shadowing
-							nilness = true, -- Check for nil pointer dereferences
+							unusedparams = true,
+							shadow = true,
+							nilness = true,
 						},
-						staticcheck = true, -- Enable staticcheck
-						gofumpt = true, -- Use gofumpt for stricter formatting
+						staticcheck = true,
+						gofumpt = true,
 					},
 				},
 			})
 			vim.lsp.enable("gopls")
-
-			-- Other servers (HTML, CSS, Tailwind, Vue, Emmet)
-			-- Note: vue_ls replaces the deprecated volar
-			local other_servers = { "html", "cssls", "tailwindcss", "vue_ls", "emmet_ls" }
-			for _, server in ipairs(other_servers) do
-				vim.lsp.config(server, {
-					capabilities = capabilities,
-					on_attach = on_attach,
-				})
-				vim.lsp.enable(server)
-			end
 		end,
 	},
-	-- ========================================================================
-	-- Completion: nvim-cmp
-	-- ========================================================================
-	-- Advanced completion engine with multiple sources:
-	-- - LSP completions
-	-- - Snippets (LuaSnip)
-	-- - Buffer words
-	-- - File paths
-	-- - Command line completions
-	-- Integrates with Copilot for Tab key handling.
 	{
 		"hrsh7th/nvim-cmp",
-		event = "InsertEnter", -- Load when entering insert mode
+		event = "InsertEnter",
 		dependencies = {
 			{
 				"L3MON4D3/LuaSnip",
@@ -893,7 +722,7 @@ require("lazy").setup({
 					["<C-e>"] = cmp.mapping.abort(),
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 
-					-- Tab for Copilot, Ctrl+j/k for CMP navigation when CMP is open
+					-- -- Tab for Copilot, Ctrl+j/k for CMP navigation when CMP is open
 					["<Tab>"] = cmp.mapping(function(fallback)
 						if cmp.visible() then
 							cmp.select_next_item()
@@ -953,24 +782,6 @@ require("lazy").setup({
 	},
 
 	{ "onsails/lspkind.nvim", event = "VeryLazy" },
-	-- ========================================================================
-	-- Cursor Animation: Smear Cursor
-	-- ========================================================================
-	-- Creates a trailing smear effect when the cursor moves for better visual tracking.
-	{
-		"sphamba/smear-cursor.nvim",
-		event = "VeryLazy",
-		opts = {
-			smear_between_buffers = true,
-			smear_between_neighbor_lines = true,
-			scroll_buffer_space = true,
-			smear_insert_mode = true,
-		},
-		config = function(_, opts)
-			require("smear_cursor").setup(opts)
-			require("smear_cursor").enabled = true
-		end,
-	},
 	{
 		"karb94/neoscroll.nvim",
 		keys = {
@@ -1081,6 +892,7 @@ require("lazy").setup({
 					"c",
 					"css",
 					"diff",
+					"go",
 					"html",
 					"javascript",
 					"json",
@@ -1089,6 +901,8 @@ require("lazy").setup({
 					"markdown",
 					"markdown_inline",
 					"python",
+					"php",
+					"phpdoc",
 					"query",
 					"regex",
 					"scss",
@@ -1169,7 +983,6 @@ require("lazy").setup({
 		"mfussenegger/nvim-jdtls",
 		ft = { "java" },
 	},
-
 	{
 		"mfussenegger/nvim-dap",
 		dependencies = {
@@ -1232,3 +1045,4 @@ require("lazy").setup({
 		end,
 	},
 })
+vim.treesitter.query.set("markdown", "injections", "")

@@ -20,10 +20,20 @@ export PATH=$PATH:$ANDROID_HOME/emulator
 # --- Oh My Zsh ---
 plugins=(
   git
+  fzf-tab
   zsh-autosuggestions
   zsh-syntax-highlighting
 )
 source "$ZSH/oh-my-zsh.sh"
+
+# fzf-tab: fuzzy tab completion, Tokyo Night, previews dirs with eza
+zstyle ':completion:*' menu no
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':fzf-tab:*' fzf-flags --color=bg:-1,bg+:#292e42,fg:#a9b1d6,fg+:#c0caf5,hl:#7aa2f7,hl+:#7dcfff,pointer:#ff9e64,border:#3b4261
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+zstyle ':fzf-tab:*' popup-min-size 80 12
+zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always --icons=always $realpath'
 
 # --- Tool Initializations ---
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # Load nvm
@@ -106,6 +116,8 @@ _fzf_comprun() {
 
 # --- Prompt Setup (Starship) ---
 eval "$(starship init zsh)"
+eval "$(atuin init zsh --disable-up-arrow)" # Ctrl-R history search
+eval "$(mise activate zsh)" # per-project tool versions (.mise.toml)
 
 # bun completions
 [ -s "/Users/apple/.bun/_bun" ] && source "/Users/apple/.bun/_bun"

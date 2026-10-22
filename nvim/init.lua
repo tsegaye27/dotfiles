@@ -652,7 +652,18 @@ require("lazy").setup({
 		cmd = "Mason", -- Only load when :Mason command is used
 		opts = {
 			-- Pre-install commonly used tools
-			ensure_installed = { "prettier", "stylua", "eslint", "eslint_d", "pyright", "gopls", "clangd" },
+			ensure_installed = {
+				"prettier",
+				"stylua",
+				"eslint",
+				"eslint_d",
+				"pyright",
+				"gopls",
+				"clangd",
+				"jdtls",
+				"java-debug-adapter",
+				"java-test",
+			},
 		},
 		-- Don't call setup() here - it's called in lspconfig config
 	},
@@ -1153,5 +1164,71 @@ require("lazy").setup({
 				border = "curved",
 			},
 		},
+	},
+	{
+		"mfussenegger/nvim-jdtls",
+		ft = { "java" },
+	},
+
+	{
+		"mfussenegger/nvim-dap",
+		dependencies = {
+			"rcarriga/nvim-dap-ui",
+			"nvim-neotest/nvim-nio",
+		},
+		keys = {
+			{
+				"db",
+				function()
+					require("dap").toggle_breakpoint()
+				end,
+				desc = "Toggle Breakpoint",
+			},
+			{
+				"dc",
+				function()
+					require("dap").continue()
+				end,
+				desc = "Debug Continue",
+			},
+			{
+				"di",
+				function()
+					require("dap").step_into()
+				end,
+				desc = "Step Into",
+			},
+			{
+				"do",
+				function()
+					require("dap").step_over()
+				end,
+				desc = "Step Over",
+			},
+			{
+				"dO",
+				function()
+					require("dap").step_out()
+				end,
+				desc = "Step Out",
+			},
+			{
+				"du",
+				function()
+					require("dapui").toggle()
+				end,
+				desc = "DAP UI",
+			},
+		},
+		config = function()
+			local dap, dapui = require("dap"), require("dapui")
+			dapui.setup()
+			dap.listeners.after.event_initialized["dapui_config"] = function()
+				dapui.open()
+			end
+			dap.listeners.before.event_terminated["dapui_config"] = function()
+				dapui.close()
+			end
+		end,
 	},
 })

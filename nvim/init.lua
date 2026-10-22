@@ -258,8 +258,56 @@ require("lazy").setup({
 		version = false,
 		lazy = false,
 		config = function()
-			require("mini.statusline").setup({
+			local ms = require("mini.statusline")
+			local L, R = "\u{e0b6}", "\u{e0b4}" -- rounded pill ends (Nerd Font)
+
+			-- Transparent bar + pill colours from catppuccin
+			local function set_hl()
+				local c = require("catppuccin.palettes").get_palette("mocha")
+				local hl = vim.api.nvim_set_hl
+				hl(0, "StatusLine", { fg = c.text, bg = "NONE" })
+				hl(0, "StatusLineNC", { fg = c.overlay0, bg = "NONE" })
+				hl(0, "MiniStatuslineFilename", { fg = c.subtext0, bg = "NONE" })
+				hl(0, "PillBody", { fg = c.text, bg = c.surface0 })
+				hl(0, "PillEdge", { fg = c.surface0, bg = "NONE" })
+				for _, m in ipairs({ "Normal", "Insert", "Visual", "Replace", "Command", "Other" }) do
+					local bg = vim.api.nvim_get_hl(0, { name = "MiniStatuslineMode" .. m, link = false }).bg
+					hl(0, "PillEdge" .. m, { fg = bg, bg = "NONE" })
+				end
+			end
+			set_hl()
+			vim.api.nvim_create_autocmd("ColorScheme", { callback = set_hl })
+
+			local function pill(body, edge, text)
+				if text == nil or text == "" then
+					return ""
+				end
+				return ("%%#%s#%s%%#%s# %s %%#%s#%s%%#StatusLine# "):format(edge, L, body, text, edge, R)
+			end
+
+			ms.setup({
 				use_icons = true,
+				content = {
+					active = function()
+						local mode, mode_hl = ms.section_mode({ trunc_width = 120 })
+						local mode_edge = mode_hl:gsub("MiniStatuslineMode", "PillEdge")
+						local vcs = vim.trim(
+							ms.section_git({ trunc_width = 40 }) .. " " .. ms.section_diff({ trunc_width = 75 })
+						)
+						return table.concat({
+							pill(mode_hl, mode_edge, mode),
+							pill("PillBody", "PillEdge", vcs),
+							"%#MiniStatuslineFilename#",
+							ms.section_filename({ trunc_width = 140 }),
+							"%=", -- transparent middle
+							"%#StatusLine#",
+							ms.section_diagnostics({ trunc_width = 75 }),
+							" ",
+							pill("PillBody", "PillEdge", ms.section_fileinfo({ trunc_width = 120 })),
+							pill(mode_hl, mode_edge, ms.section_location({ trunc_width = 75 })),
+						})
+					end,
+				},
 			})
 			vim.opt.laststatus = 3 -- global statusline
 		end,

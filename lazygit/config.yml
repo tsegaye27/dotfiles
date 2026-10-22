@@ -1,13 +1,11 @@
 customCommands:
   - key: "<c-x>"
-    description: "Pick AI commit"
     context: "files"
-    command: 'git commit -m "{{.Form.Msg}}"'
-    prompts:
-      - type: "menuFromCommand"
-        title: "AI Commits"
-        key: "Msg"
-        command: "lazycommit commit"
-        filter: "^(?P<raw>.+)$"
-        valueFormat: "{{ .raw }}"
-        labelFormat: "{{ .raw | green }}"
+    description: "Generate commit message with Claude Code"
+    command: >-
+      f=$(mktemp) &&
+      git diff --staged --quiet && { echo "Nothing staged"; sleep 1; exit 1; };
+      git diff --staged -- . ':!*.lock' ':!package-lock.json' ':!go.sum' |
+      /Users/apple/.local/bin/claude -p 'Generate a concise git commit message for these staged changes. Output ONLY the raw commit message with no markdown, no code blocks, no backticks, no explanations, no trailer. Use conventional commit format.' --model haiku --output-format text > "$f" &&
+      GIT_EDITOR=vim git commit -e -F "$f"
+    output: terminal

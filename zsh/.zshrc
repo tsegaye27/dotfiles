@@ -85,6 +85,7 @@ alias gd="git diff"
 alias gdc="git diff --cached"
 alias taudio="yt-dlp -x --audio-format mp3"
 alias claw="/Users/apple/old-files/my-projects/claw-code/rust/target/release/claw"
+alias spr='mvn spring-boot:run'
 
 # --- Functions ---
 _fzf_compgen_path() {
@@ -131,3 +132,15 @@ alias claude-mem='bun "/Users/apple/.claude/plugins/marketplaces/thedotmack/plug
 # Added by Antigravity CLI installer
 export PATH="/Users/apple/.local/bin:$PATH"
 export JAVA_HOME=/opt/homebrew/opt/openjdk@25/libexec/openjdk.jdk/Contents/Home
+
+# pnpm
+export PNPM_HOME="/Users/apple/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+export PATH="$HOME/Library/Python/3.9/bin:$PATH"
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
